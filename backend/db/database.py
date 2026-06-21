@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy.ext.declarative import declarative_base
 
 from core.config import settings
 
@@ -22,4 +21,6 @@ def get_db():
 
 
 def create_tables():
-    Base.metadata.create_all(bind=engine)       
+    from models.story import Story, StoryNode
+    from models.job import StoryJob
+    Base.metadata.create_all(bind=engine)

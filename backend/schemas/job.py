@@ -1,6 +1,6 @@
 from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class StoryjobBase(BaseModel):
@@ -8,16 +8,16 @@ class StoryjobBase(BaseModel):
 
 
 class StoryJobResponse(BaseModel):
-        job_id: int
-        status: str
-        created_at: datetime
-        story_id: Optional[int] = None
-        completed_at: Optional[datetime] = None
-        error: Optional[str] = None
+    job_id: str
+    status: str
+    created_at: datetime
+    story_id: Optional[int] = None
+    completed_at: Optional[datetime] = None
+    error: Optional[str] = None
 
-class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class StoryJobCreate(StoryjobBase):
     pass
+

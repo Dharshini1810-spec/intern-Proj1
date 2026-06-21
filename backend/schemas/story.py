@@ -1,11 +1,12 @@
 from typing import List, Optional, Dict
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class StoryOptionsSchemas(BaseModel):
     text: str
     node_id: Optional[int] = None
+    required_item: Optional[str] = None
 
 
 class StoryNodeBase(BaseModel): 
@@ -17,28 +18,35 @@ class StoryNodeBase(BaseModel):
 class CompleteStoryNodeResponse(StoryNodeBase):
     id: int
     options: List[StoryOptionsSchemas] = []
+    chapter: Optional[str] = None
+    rewards: Optional[dict] = None
+    item_collected: Optional[str] = None
+    achievement_unlocked: Optional[str] = None
+    ending_type: Optional[str] = None
+    mini_game: Optional[str] = None
 
-    class Config:
-        from_attributes = True 
+    model_config = ConfigDict(from_attributes=True)
 
 
 class StoryBase(BaseModel):
     title: str
-    session: Optional[str] = None 
+    character: Optional[str] = None
+    session_id: Optional[str] = None 
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CreateStoryRequest(BaseModel):
     theme: str
+    character: Optional[str] = "Explorer Emma"
 
 
 class CompleteStoryResponse(StoryBase):
     id: int
     created_at: datetime
-    root_node:CompleteStoryNodeResponse
+    root_node: Optional[CompleteStoryNodeResponse] = None
     all_nodes: Dict[int, CompleteStoryNodeResponse]
 
-    class config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+
