@@ -135,3 +135,43 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Fredoka One', cursive;
   letter-spacing: 0.02em;
 }
+
+/* Floating Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(3deg);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes drift {
+  0% {
+    transform: translateY(110vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-10vh) translateX(60px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.animate-drift {
+  animation: drift 16s linear infinite;
+}
+
+.animate-spin-slow {
+  animation: spin 15s linear infinite;
+}
+

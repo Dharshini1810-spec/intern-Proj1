@@ -7,15 +7,23 @@ import {
 import { FaSkull, FaCrown, FaUserAstronaut, FaMagic, FaVolumeUp } from 'react-icons/fa';
 import { storyService } from './services/storyService';
 
+// Character Portraits
+import lunaImg from './assets/luna.png';
+import alexImg from './assets/alex.png';
+import pennyImg from './assets/penny.png';
+import wallyImg from './assets/wally.png';
+import rexImg from './assets/rex.png';
+import daveImg from './assets/dave.png';
+
 // Kids Character Presets
 const CHARACTERS = [
-  { id: 'Luna', name: 'Princess Luna', icon: '👑', avatar: FaCrown, desc: ' Luna commands animal speech and wears a tiara of starlight!', ability: 'Animal Talk', personality: 'Kind & Friendly', color: 'from-pink-400 to-rose-500' },
-  { id: 'Alex', name: 'Astronaut Alex', icon: '🚀', avatar: FaUserAstronaut, desc: 'Alex uses special gravity boots to float in space!', ability: 'Gravity Float', personality: 'Curious & Brave', color: 'from-cyan-400 to-blue-500' },
-  { id: 'Penny', name: 'Pirate Penny', icon: '🏴‍☠️', avatar: FiCompass, desc: 'Penny navigates stormy seas with a golden spyglass!', ability: 'Spyglass Sight', personality: 'Daring & Adventurous', color: 'from-amber-400 to-orange-500' },
-  { id: 'Wally', name: 'Wizard Wally', icon: '🧙‍♂️', avatar: FaMagic, desc: 'Wally wields a magic wand that lights up dark caves!', ability: 'Sparkle Spell', personality: 'Wise & Gentle', color: 'from-purple-400 to-indigo-500' },
-  { id: 'Rex', name: 'Robot Rex', icon: '🤖', avatar: FiCpu, desc: 'Rex is made of shiny iron and uses a super-scanner tool!', ability: 'Super Scanner', personality: 'Funny & Smart', color: 'from-emerald-400 to-teal-500' },
-  { id: 'Dave', name: 'Dino Dave', icon: '🦖', avatar: FiActivity, desc: 'Dave stomps through wild jungles with strong dinosaur footprints!', ability: 'Dino Roar', personality: 'Strong & Playful', color: 'from-lime-400 to-green-600' },
-  { id: 'Emma', name: 'Explorer Emma', icon: '🧭', avatar: FiCompass, desc: 'Emma uses her trusty compass to locate hidden paths!', ability: 'Path Finder', personality: 'Clever & Quick', color: 'from-orange-400 to-red-500' },
+  { id: 'Luna', name: 'Princess Luna', icon: '👑', avatar: FaCrown, desc: ' Luna commands animal speech and wears a tiara of starlight!', ability: 'Animal Talk', personality: 'Kind & Friendly', color: 'from-pink-400 to-rose-500', image: lunaImg },
+  { id: 'Alex', name: 'Astronaut Alex', icon: '🚀', avatar: FaUserAstronaut, desc: 'Alex uses special gravity boots to float in space!', ability: 'Gravity Float', personality: 'Curious & Brave', color: 'from-cyan-400 to-blue-500', image: alexImg },
+  { id: 'Penny', name: 'Pirate Penny', icon: '🏴\u200d☠️', avatar: FiCompass, desc: 'Penny navigates stormy seas with a golden spyglass!', ability: 'Spyglass Sight', personality: 'Daring & Adventurous', color: 'from-amber-400 to-orange-500', image: pennyImg },
+  { id: 'Wally', name: 'Wizard Wally', icon: '🧙\u200d‍♂️', avatar: FaMagic, desc: 'Wally wields a magic wand that lights up dark caves!', ability: 'Sparkle Spell', personality: 'Wise & Gentle', color: 'from-purple-400 to-indigo-500', image: wallyImg },
+  { id: 'Rex', name: 'Robot Rex', icon: '🤖', avatar: FiCpu, desc: 'Rex is made of shiny iron and uses a super-scanner tool!', ability: 'Super Scanner', personality: 'Funny & Smart', color: 'from-emerald-400 to-teal-500', image: rexImg },
+  { id: 'Dave', name: 'Dino Dave', icon: '🦖', avatar: FiActivity, desc: 'Dave stomps through jungles wearing dinosaur onesies!', ability: 'Dino Roar', personality: 'Strong & Playful', color: 'from-lime-400 to-green-600', image: daveImg },
+  { id: 'Emma', name: 'Explorer Emma', icon: '🧭', avatar: FiCompass, desc: 'Emma uses her trusty compass to locate hidden paths!', ability: 'Path Finder', personality: 'Clever & Quick', color: 'from-orange-400 to-red-500', image: null },
 ];
 
 const PRESET_THEMES = [
@@ -35,6 +43,16 @@ const MAP_LOCATIONS = [
   { name: 'Space Station', icon: '🚀', color: '#06b6d4' },
   { name: 'Magic Castle', icon: '🏰', color: '#ff5e97' },
 ];
+
+const CHARACTER_PARTICLES = {
+  Luna: ['⭐', '👑', '✨', '🌸', '💖'],
+  Alex: ['🚀', '⭐', '🪐', '💫', '☄️'],
+  Penny: ['⚓', '🪙', '🌊', '🏴‍☠️', '🫧'],
+  Wally: ['🔮', '✨', '⚡', '🧙‍♂️', '🌟'],
+  Rex: ['⚙️', '🤖', '🔋', '💾', '🧩'],
+  Dave: ['🌴', '🦖', '🦕', '🍃', '🌋'],
+  Emma: ['🧭', '🗺️', '⛰️', '⛺', '🎒']
+};
 
 const CHARACTER_DIALOGS = {
   Luna: {
@@ -773,8 +791,33 @@ export default function App() {
   return (
     <div className={`min-h-screen flex flex-col items-center justify-between p-4 md:p-6 transition-all duration-700 relative overflow-hidden ${getDynamicBackgroundClass()}`}>
       
-      {/* Dynamic star particles floating background */}
-      <div className="absolute inset-0 pointer-events-none opacity-30">
+      {/* Floating theme background elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        {Array.from({ length: 15 }).map((_, i) => {
+          const list = CHARACTER_PARTICLES[selectedChar.id] || CHARACTER_PARTICLES.Emma;
+          const charSymbol = list[i % list.length];
+          const leftVal = (i * 7) + 2;
+          const delay = i * 1.2;
+          const duration = 14 + (i % 5) * 3;
+          return (
+            <span 
+              key={i} 
+              className="absolute text-4xl select-none opacity-20 animate-drift"
+              style={{
+                left: `${leftVal}%`,
+                animationDelay: `${delay}s`,
+                animationDuration: `${duration}s`,
+                top: '100%',
+              }}
+            >
+              {charSymbol}
+            </span>
+          );
+        })}
+      </div>
+
+      {/* Dynamic star particles glowing background */}
+      <div className="absolute inset-0 pointer-events-none opacity-35 z-0">
         <div className="stars-glowing absolute h-full w-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900/10 via-transparent to-transparent animate-pulse"></div>
       </div>
 
@@ -835,21 +878,38 @@ export default function App() {
           <section className="lg:col-span-4 space-y-4">
             
             {/* COMPANION GUIDE HERO CARD (Reactive bubble speaking on every screen) */}
-            <div className="kids-panel p-5 border-primary relative flex flex-col gap-3 group">
-              <div className="flex items-center gap-4">
-                <div className={`h-16 w-16 rounded-2xl bg-gradient-to-tr ${selectedChar.color} flex items-center justify-center text-4xl shadow-md border-2 border-white cursor-pointer transform hover:scale-110 active:scale-95 transition-all duration-300`} onClick={handleCompanionClick}>
-                  {React.createElement(selectedChar.avatar, { className: "text-white h-8 w-8 animate-bounce [animation-duration:3s]" })}
+            <div className="kids-panel p-5 border-primary relative flex flex-col gap-4 group">
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <div className="relative cursor-pointer transform hover:scale-105 active:scale-95 transition-all duration-300 flex-shrink-0" onClick={handleCompanionClick}>
+                  {selectedChar.image ? (
+                    <img 
+                      src={selectedChar.image} 
+                      alt={selectedChar.name} 
+                      className="h-28 w-28 object-contain rounded-2xl border-2 border-white shadow-lg bg-slate-900/60 animate-float"
+                    />
+                  ) : (
+                    <div className={`h-24 w-24 rounded-2xl bg-gradient-to-tr ${selectedChar.color} flex items-center justify-center text-4xl shadow-md border-2 border-white animate-float`}>
+                      {React.createElement(selectedChar.avatar, { className: "text-white h-10 w-10 animate-bounce [animation-duration:3s]" })}
+                    </div>
+                  )}
+                  {selectedChar.image && (
+                    <span className="absolute -bottom-2 -right-2 text-2xl animate-bounce">
+                      {selectedChar.icon}
+                    </span>
+                  )}
                 </div>
-                <div className="space-y-0.5">
+                
+                <div className="space-y-1 text-center sm:text-left">
                   <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Companion Guide</span>
                   <h3 className="text-xl font-bold text-white leading-none">{selectedChar.name}</h3>
-                  <span className="text-xs text-secondary font-semibold">Ability: {selectedChar.ability}</span>
+                  <span className="text-xs text-secondary font-semibold block">Ability: {selectedChar.ability}</span>
+                  <span className="text-[10px] text-accent font-black block uppercase tracking-wider">{selectedChar.personality}</span>
                 </div>
               </div>
 
               {/* Talking Animated Speech Bubble */}
-              <div className="relative mt-2 p-3.5 bg-slate-950/60 rounded-2xl border border-slate-800 text-slate-200 text-sm leading-relaxed font-bold shadow-inner">
-                <div className="absolute -top-2 left-6 h-4 w-4 rotate-45 bg-slate-950 border-l border-t border-slate-800"></div>
+              <div className="relative mt-1 p-4 bg-slate-950/70 rounded-2xl border border-slate-800 text-slate-100 text-sm leading-relaxed font-bold shadow-inner">
+                <div className="absolute -top-2 left-10 h-4 w-4 rotate-45 bg-slate-950 border-l border-t border-slate-800"></div>
                 <p>{guideSpeech}</p>
                 <div className="flex justify-end mt-1 text-[9px] text-slate-500 italic uppercase">
                   Click avatar to cheer!
@@ -1004,8 +1064,23 @@ export default function App() {
                           isSelected ? 'border-primary bg-slate-900/60 scale-102 shadow-lg shadow-primary/20' : 'border-slate-800 hover:border-slate-750'
                         }`}
                       >
-                        <div className={`h-16 w-16 rounded-2xl bg-gradient-to-tr ${char.color} flex items-center justify-center text-4xl shadow-md border-2 border-white`}>
-                          {React.createElement(char.avatar, { className: "text-white h-8 w-8 animate-bounce [animation-duration:3s]" })}
+                        <div className="relative">
+                          {char.image ? (
+                            <img 
+                              src={char.image} 
+                              alt={char.name} 
+                              className="h-24 w-24 object-contain rounded-xl border-2 border-white shadow-md bg-slate-950/40"
+                            />
+                          ) : (
+                            <div className={`h-20 w-20 rounded-xl bg-gradient-to-tr ${char.color} flex items-center justify-center text-3xl shadow-md border-2 border-white`}>
+                              {React.createElement(char.avatar, { className: "text-white h-9 w-9 animate-bounce [animation-duration:3s]" })}
+                            </div>
+                          )}
+                          {char.image && (
+                            <span className="absolute -bottom-1 -right-1 text-xl">
+                              {char.icon}
+                            </span>
+                          )}
                         </div>
                         <div className="space-y-1">
                           <h3 className="text-base font-bold text-white">{char.name}</h3>

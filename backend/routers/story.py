@@ -81,11 +81,11 @@ def generate_story_task(job_id: str, theme: str, character: str, session_id: str
             db.add(story)
             db.commit()
 
-            # Create 45 story nodes programmatically
+            # Create 59 story nodes programmatically
             nodes = []
-            for i in range(45):
+            for i in range(59):
                 is_root = (i == 0)
-                is_ending = (i >= 31)
+                is_ending = (i >= 45)
                 
                 # Determine chapter
                 if i == 0:
@@ -96,8 +96,10 @@ def generate_story_task(job_id: str, theme: str, character: str, session_id: str
                     chapter = "Chapter 3: The Adventure"
                 elif i <= 30:
                     chapter = "Chapter 4: The Challenge"
-                else:
+                elif i <= 44:
                     chapter = "Chapter 5: The Final Quest"
+                else:
+                    chapter = "Chapter 6: The Conclusion"
                     
                 # Determine rewards (Kindness, Wisdom, Courage, Friendship)
                 # Set seed so it's deterministic per node index and theme/character length
@@ -162,7 +164,7 @@ def generate_story_task(job_id: str, theme: str, character: str, session_id: str
                         ("Legendary Ending: Star Ascension", True),
                         ("Funny Ending: Dancing Goblins", False),
                     ]
-                    ending_type, is_winning = endings_list[(i - 31) % len(endings_list)]
+                    ending_type, is_winning = endings_list[(i - 45) % len(endings_list)]
                     
                 # Generate content text child-friendly
                 content = ""
@@ -193,7 +195,9 @@ def generate_story_task(job_id: str, theme: str, character: str, session_id: str
                 elif i == 12:
                     content = f"In a corner of the cave, you find a giant locked crystal chest. Before you can open it, you must solve a card matching game!"
                 elif i <= 30:
-                    content = f"You face the ultimate challenge in this chapter! Obstacles block your way, but with your special ability, you can overcome them. You must make your final choice to reach the portal of destiny!"
+                    content = f"You face a grand challenge on the path! Obstacles block your way, but with your special ability, you can overcome them. You must make your choice to reach the legendary showdown portal!"
+                elif i <= 44:
+                    content = f"Wow! You have entered the Final Quest Showdown chamber! The magical guardian of {theme} stands before you. They offer one final riddling test of courage. You must choose how to make your final approach!"
                 else:
                     # Endings
                     if is_winning:
@@ -218,7 +222,7 @@ def generate_story_task(job_id: str, theme: str, character: str, session_id: str
                 nodes.append(node)
                 db.add(node)
                 
-            db.commit() # Now all 45 nodes have database IDs!
+            db.commit() # Now all 59 nodes have database IDs!
 
             # Update options linking to actual database IDs
             # Node 0 (Root) -> 3 options leading to 1, 2, 3
@@ -249,15 +253,6 @@ def generate_story_task(job_id: str, theme: str, character: str, session_id: str
             ]
             
             # Nodes 4 to 12 (Level 2) -> 2 options leading to 13 to 30
-            # Node 4 -> 13, 14
-            # Node 5 -> 15, 16
-            # Node 6 -> 17, 18
-            # Node 7 -> 19, 20
-            # Node 8 -> 21, 22
-            # Node 9 -> 23, 24
-            # Node 10 -> 25, 26
-            # Node 11 -> 27, 28
-            # Node 12 -> 29, 30
             for j in range(4, 13):
                 left_child_idx = 2 * j + 5  # 4 -> 13, 5 -> 15, etc.
                 right_child_idx = 2 * j + 6 # 4 -> 14, 5 -> 16, etc.
@@ -280,7 +275,7 @@ def generate_story_task(job_id: str, theme: str, character: str, session_id: str
                     {"text": f"🔑 {text_b}", "node_id": nodes[right_child_idx].id}
                 ]
                 
-            # Nodes 13 to 30 (Level 3) -> 2 options leading to endings 31 to 44
+            # Nodes 13 to 30 (Level 3) -> 2 options leading to 31 to 44
             for j in range(13, 31):
                 left_child_idx = 31 + (j - 13) % 14
                 right_child_idx = 31 + (j - 13 + 1) % 14
@@ -306,6 +301,16 @@ def generate_story_task(job_id: str, theme: str, character: str, session_id: str
                         "text": "🚶 Take the normal path of destiny",
                         "node_id": nodes[right_child_idx].id
                     }
+                ]
+                
+            # Nodes 31 to 44 (Level 4) -> 2 options leading to endings 45 to 58
+            for j in range(31, 45):
+                left_child_idx = 45 + (j - 31) % 14
+                right_child_idx = 45 + (j - 31 + 1) % 14
+                
+                nodes[j].options = [
+                    {"text": "✨ Reach the ultimate victory gate", "node_id": nodes[left_child_idx].id},
+                    {"text": "🌈 Walk into the magical conclusion", "node_id": nodes[right_child_idx].id}
                 ]
                 
             db.commit()
