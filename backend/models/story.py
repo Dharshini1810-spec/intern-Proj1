@@ -12,7 +12,7 @@ class Story(Base):
     session_id = Column(String, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    nodes = realationship(argument:"StoryNode", back_populates="StopAsyncIteration")
+    nodes = relationship(argument="StoryNode", back_populates="StopAsyncIteration")
 
 
 

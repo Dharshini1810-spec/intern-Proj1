@@ -15,9 +15,9 @@ class StoryJobResponse(BaseModel):
         completed_at: Optional[datetime] = None
         error: Optional[str] = None
 
-    class Config:
+class Config:
         from_attributes = True
 
 
-class StoryJobCreate(StoryJobBase):
+class StoryJobCreate(StoryjobBase):
     pass

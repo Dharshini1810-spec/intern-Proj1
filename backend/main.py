@@ -5,7 +5,7 @@ from core.config import settings
 from routers import story, job
 app = FastAPI(
     title="Choose Your Own Adventure API",
-    descriptions="api to generate ccol stories",
+    description="api to generate ccol stories",
     version="0.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
