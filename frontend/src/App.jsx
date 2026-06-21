@@ -133,6 +133,7 @@ export default function App() {
   
   // Companion guide reaction dialog
   const [guideSpeech, setGuideSpeech] = useState("");
+  const [showSpeechBubble, setShowSpeechBubble] = useState(false);
 
   // Canvas interactive variables
   const canvasRef = useRef(null);
@@ -164,22 +165,36 @@ export default function App() {
   // Generate guide bubble
   useEffect(() => {
     const dialogs = CHARACTER_DIALOGS[selectedChar.id] || CHARACTER_DIALOGS.Emma;
+    let text = "";
     if (step === 'character-selection') {
-      setGuideSpeech("Choose me, and let's explore together!");
+      text = "Choose me, and let's explore together!";
     } else if (step === 'landing') {
-      setGuideSpeech(dialogs.start);
+      text = dialogs.start;
     } else if (step === 'generating') {
-      setGuideSpeech(dialogs.generating);
+      text = dialogs.generating;
     } else if (step === 'playing' && currentNode) {
       if (currentNode.mini_game && !miniGameSolved) {
-        setGuideSpeech(dialogs.game);
+        text = dialogs.game;
       } else if (currentNode.item_collected) {
-        setGuideSpeech(`${dialogs.item} It's the **${currentNode.item_collected}**!`);
+        text = `${dialogs.item} It's the **${currentNode.item_collected}**!`;
       } else {
-        setGuideSpeech(dialogs.play);
+        text = dialogs.play;
       }
     } else if (step === 'ending') {
-      setGuideSpeech(dialogs.ending);
+      text = dialogs.ending;
+    }
+
+    if (text) {
+      setGuideSpeech(text);
+      setShowSpeechBubble(true);
+      
+      // Auto fade-out after 5 seconds, except during map generation loading
+      if (step !== 'generating') {
+        const timer = setTimeout(() => {
+          setShowSpeechBubble(false);
+        }, 5000);
+        return () => clearTimeout(timer);
+      }
     }
   }, [step, currentNode, selectedChar, miniGameSolved]);
 
@@ -194,7 +209,13 @@ export default function App() {
     ];
     const randQuote = quotes[Math.floor(Math.random() * quotes.length)];
     setGuideSpeech(randQuote);
+    setShowSpeechBubble(true);
     triggerCelebrationConfetti();
+
+    const timer = setTimeout(() => {
+      setShowSpeechBubble(false);
+    }, 5000);
+    return () => clearTimeout(timer);
   };
 
   // Trigger celebration confetti
@@ -908,13 +929,23 @@ export default function App() {
               </div>
 
               {/* Talking Animated Speech Bubble */}
-              <div className="relative mt-1 p-4 bg-slate-950/70 rounded-2xl border border-slate-800 text-slate-100 text-sm leading-relaxed font-bold shadow-inner">
-                <div className="absolute -top-2 left-10 h-4 w-4 rotate-45 bg-slate-950 border-l border-t border-slate-800"></div>
-                <p>{guideSpeech}</p>
-                <div className="flex justify-end mt-1 text-[9px] text-slate-500 italic uppercase">
-                  Click avatar to cheer!
-                </div>
-              </div>
+              <AnimatePresence>
+                {showSpeechBubble && guideSpeech && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9, y: 5 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: 5 }}
+                    transition={{ duration: 0.25 }}
+                    className="relative mt-1 p-4 bg-slate-950/70 rounded-2xl border border-slate-800 text-slate-100 text-sm leading-relaxed font-bold shadow-inner z-20"
+                  >
+                    <div className="absolute -top-2 left-10 h-4 w-4 rotate-45 bg-slate-950 border-l border-t border-slate-800"></div>
+                    <p>{guideSpeech}</p>
+                    <div className="flex justify-end mt-1 text-[9px] text-slate-500 italic uppercase">
+                      Click avatar to cheer!
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* 3D CANVAS SHAPE INSPECTOR */}
