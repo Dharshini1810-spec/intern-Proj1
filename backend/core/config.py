@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     ALLOWED_ORIGINS: Union[str, List[str]] = ""
 
-    OPENAI_API_KEY: str = ""
+    GROQ_API_KEY: str = ""
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod
