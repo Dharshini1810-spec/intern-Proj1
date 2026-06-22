@@ -74,7 +74,8 @@ def _get_groq_client():
         from groq import Groq
         if settings.GROQ_API_KEY:
             return Groq(api_key=settings.GROQ_API_KEY)
-    except Exception:
+    except Exception as e:
+        print(f"Groq Client Init Error: {e}")
         pass
     return None
 
@@ -133,7 +134,7 @@ def _generate_story_content_with_groq(client, character: str, theme: str, node_i
 
     try:
         response = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
@@ -143,6 +144,7 @@ def _generate_story_content_with_groq(client, character: str, theme: str, node_i
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
+        print(f"Groq API Error in content: {e}")
         return None  # Fall back to static content
 
 
@@ -161,7 +163,7 @@ def _generate_choice_labels_with_groq(client, character: str, theme: str, locati
     )
     try:
         response = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
